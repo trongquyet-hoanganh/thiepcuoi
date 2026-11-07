@@ -8,10 +8,9 @@
   function up(t) { return t.toUpperCase(); }
   function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
   var pd = parts(p.date), cd = parts(c.date);
-  var groomFirst = inv.side !== 'gai';
   var T = {
-    role1: groomFirst ? 'Chú Rể' : 'Cô Dâu',
-    role2: groomFirst ? 'Cô Dâu' : 'Chú Rể',
+    role1: 'Chú Rể',
+    role2: 'Cô Dâu',
     short1: inv.first, short2: inv.second,
     'p1-father': inv.parents[0].father, 'p1-mother': inv.parents[0].mother,
     'p2-father': inv.parents[1].father, 'p2-mother': inv.parents[1].mother,

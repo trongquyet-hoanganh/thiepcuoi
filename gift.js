@@ -1,6 +1,6 @@
 // Hộp mừng cưới dùng chung cho mọi thiệp: mã QR, ngân hàng, số tài khoản của chú rể và cô dâu (WEDDING_GIFTS trong config.js).
 // Dùng (sau config.js): <script src="../gift.js" data-accent="#928362" data-bg="#FBF8F2" data-ink="#4A3F33"></script>
-// Nút nào có thuộc tính data-gift-open sẽ mở hộp này. Người của bên mời (?ben=) đứng trước.
+// Nút nào có thuộc tính data-gift-open sẽ mở hộp này. Chú rể luôn đứng trước cô dâu.
 (function () {
   var script = document.currentScript;
   function attr(name, fallback) { return (script && script.getAttribute('data-' + name)) || fallback; }
@@ -8,7 +8,6 @@
   // Ảnh QR theo cùng phiên bản ?v= của gift.js để đổi ảnh là khách thấy ngay
   var version = (script && script.src.match(/\?v=\d+/) || [''])[0];
   var gifts = window.WEDDING_GIFTS || {};
-  var side = window.weddingInvite ? window.weddingInvite().side : 'trai';
   var accent = attr('accent', '#8a6a3a'), bg = attr('bg', '#fffdf8'), ink = attr('ink', '#2b2621');
   var font = attr('font', '"Times New Roman", Times, serif');
   var ui = 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';
@@ -101,8 +100,8 @@
     var title = el('h2', 'gb-title', 'Hộp quà mừng'); title.id = 'gb-title';
     head.append(title, el('p', 'gb-sub', 'Cảm ơn tình cảm quý khách dành cho chúng tôi'));
     dialog.append(close, head);
-    var order = side === 'gai' ? ['gai', 'trai'] : ['trai', 'gai'];
-    order.forEach(function (k) { if (gifts[k]) dialog.appendChild(item(gifts[k])); });
+    // Chú rể trên, cô dâu dưới (cả thiệp nhà gái)
+    ['trai', 'gai'].forEach(function (k) { if (gifts[k]) dialog.appendChild(item(gifts[k])); });
     dialog.appendChild(el('p', 'gb-hint', 'Chạm vào mã QR để mở ảnh và lưu về máy'));
     document.body.appendChild(dialog);
   }

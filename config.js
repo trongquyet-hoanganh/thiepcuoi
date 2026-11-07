@@ -45,12 +45,13 @@ window.WEDDING_SIDES = {
       maps: 'https://www.google.com/maps/search/S%E1%BB%91+106+%C4%90%C6%B0%E1%BB%9Dng+Th%C3%B4n+Trung+2+%C3%94+Di%C3%AAn+H%C3%A0+N%E1%BB%99i',
     },
   },
+  // Thiệp nhà gái vẫn để chú rể và bố mẹ chú rể trước (bên trái / bên trên), cô dâu sau
   gai: {
-    first: 'Hoàng Anh', second: 'Trọng Quyết',
-    fullFirst: 'Hà Hoàng Anh', fullSecond: 'Nguyễn Trọng Quyết',
+    first: 'Trọng Quyết', second: 'Hoàng Anh',
+    fullFirst: 'Nguyễn Trọng Quyết', fullSecond: 'Hà Hoàng Anh',
     parents: [
-      { label: 'Nhà gái', father: 'Hà Văn Hùng', mother: 'Phạm Thị Xuyến', address: 'Số 03, Xóm Đoàn Kết, Cụm 2, Xã Ô Diên, TP Hà Nội' },
       { label: 'Nhà trai', father: 'Nguyễn Trọng Đồng', mother: 'Vũ Thị Hiền', address: 'Số 106, Đường Thôn Trung 2, Xã Ô Diên, TP Hà Nội' },
+      { label: 'Nhà gái', father: 'Hà Văn Hùng', mother: 'Phạm Thị Xuyến', address: 'Số 03, Xóm Đoàn Kết, Cụm 2, Xã Ô Diên, TP Hà Nội' },
     ],
     party: {
       time: '15:30', weekday: 'Thứ Sáu', date: '2026-11-27', lunar: '19 tháng 10 năm Bính Ngọ',
@@ -72,16 +73,31 @@ function weddingTimeline(partyTime) {
   var seat = ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2);
   return [
     { date: 'Thứ Sáu 27.11', items: [
-      { time: partyTime, label: 'Đón khách' },
-      { time: seat, label: 'Nhập tiệc' },
-      { time: '19:00', label: 'Dance & DJ' },
+      { time: partyTime, label: 'Đón khách', icon: 'guests' },
+      { time: seat, label: 'Nhập tiệc', icon: 'dinner' },
+      { time: '19:00', label: 'Dance & DJ', icon: 'music' },
     ] },
     { date: 'Thứ Bảy 28.11', items: [
-      { time: '12:00', label: 'Lễ Vu Quy nhà gái' },
-      { time: '14:45', label: 'Lễ Thành Hôn nhà trai' },
+      { time: '12:00', label: 'Lễ Vu Quy nhà gái', icon: 'home' },
+      { time: '14:45', label: 'Lễ Thành Hôn nhà trai', icon: 'rings' },
     ] },
   ];
 }
+
+// Biểu tượng nét mảnh cho từng mốc lịch trình (màu theo currentColor):
+// đón khách = nhóm người, nhập tiệc = dao dĩa, Dance & DJ = nốt nhạc, lễ vu quy = ngôi nhà có trái tim, lễ thành hôn = đôi nhẫn
+var WEDDING_ICONS = {
+  guests: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  dinner: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
+  music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  home: '<path d="M3 10a2 2 0 0 1 .7-1.53l7-6a2 2 0 0 1 2.6 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8.6 13.8A2.25 2.25 0 1 1 12 10.84a2.25 2.25 0 1 1 3.4 2.96l-2.63 2.86a1 1 0 0 1-1.5 0z"/>',
+  rings: '<circle cx="8.5" cy="14.5" r="5.5"/><circle cx="15.5" cy="14.5" r="5.5"/><path d="M10 6.5 12 4l2 2.5-2 3z"/>',
+};
+window.weddingIcon = function (name, cls) {
+  var p = WEDDING_ICONS[name];
+  return p ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"' +
+    (cls ? ' class="' + cls + '"' : '') + '>' + p + '</svg>' : '';
+};
 
 // Đọc bên mời (?ben=gai) và giờ tiệc riêng (?gio=HH:MM) từ link.
 window.weddingInvite = function () {

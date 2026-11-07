@@ -21,6 +21,25 @@
     return item;
   }
 
+  // Biểu tượng của mốc (weddingIcon trong config.js): mẫu có sẵn icon thì thay icon,
+  // mẫu chỉ có chấm tròn trên trục thì thay chấm bằng huy hiệu tròn cùng màu có icon trắng
+  function setIcon(item, name) {
+    var svg = item.querySelector('svg'), html = window.weddingIcon && window.weddingIcon(name, svg && svg.getAttribute('class'));
+    var medal = item.querySelector('img[src*="medallion"]');
+    if (medal && name !== 'rings') medal.parentElement.remove();
+    if (!html) return;
+    if (svg) { svg.outerHTML = html; return; }
+    var dot = item.querySelector('span.rounded-full[class*="h-2.5"]');
+    if (!dot) return;
+    var badge = document.createElement('span'), color = dot.style.backgroundColor || 'currentColor';
+    badge.className = 'tl-badge';
+    badge.style.cssText = 'position:relative;display:flex;align-items:center;justify-content:center;flex:none;width:30px;height:30px;border-radius:50%;color:#fff;background:' + color +
+      ';box-shadow:0 0 0 3px color-mix(in srgb,' + color + ' 18%,transparent)';
+    badge.innerHTML = html;
+    badge.firstChild.style.cssText = 'width:16px;height:16px';
+    dot.replaceWith(badge);
+  }
+
   window.renderTimeline = function () {
     var inv = window.weddingInvite && window.weddingInvite();
     var t2 = document.querySelector('[data-w="t2-time"]');
@@ -44,6 +63,7 @@
       frag.appendChild(head);
       day.items.forEach(function (ev) {
         var item = fill((i ? second : first).cloneNode(true), ev.time, ev.label);
+        setIcon(item, ev.icon);
         var last = ++k === total, own = item.querySelector('[class*="w-px"]');
         if (last && own) own.remove();
         else if (!last && !own && link && item.children[linkCol]) item.children[linkCol].prepend(link.cloneNode(true));
