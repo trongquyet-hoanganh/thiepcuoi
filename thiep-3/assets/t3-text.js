@@ -4,7 +4,8 @@
 
   function parts(d) { var x = d.split('-'); return { y: x[0], m: x[1], d: x[2] }; }
   function title(t) { return t.replace(/(^|\s)(\S)/g, function (m, a, b) { return a + b.toUpperCase(); }); }
-  function dm(d) { var x = parts(d); return +x.d + '/' + +x.m; }
+  // Địa chỉ hai ý: số nhà, đường | xã, thành phố
+  function twoLines(a) { return a.replace(', Xã ', ',\nXã '); }
 
   function texts(inv, guest) {
     var p = inv.party, c = inv.ceremony, pd = parts(p.date), cd = parts(c.date);
@@ -17,8 +18,8 @@
       guest: g,
       letter: 'Thân gửi ' + g + ', chúng tôi vô cùng hạnh phúc được chia sẻ niềm vui trong ngày trọng đại này. ' +
         'Sự hiện diện của ' + (guest || 'quý khách') + ' sẽ là niềm vinh hạnh lớn lao đối với gia đình chúng tôi. Trân trọng kính mời!',
-      'p1-father': inv.parents[0].father, 'p1-mother': inv.parents[0].mother, 'p1-address': inv.parents[0].address,
-      'p2-father': inv.parents[1].father, 'p2-mother': inv.parents[1].mother, 'p2-address': inv.parents[1].address,
+      'p1-father': inv.parents[0].father, 'p1-mother': inv.parents[0].mother, 'p1-address': twoLines(inv.parents[0].address),
+      'p2-father': inv.parents[1].father, 'p2-mother': inv.parents[1].mother, 'p2-address': twoLines(inv.parents[1].address),
       // Theo thiệp in: nhà gái "thông báo tổ chức", nhà trai "báo tin"
       announce: (inv.side === 'gai' ? 'Trân Trọng Thông Báo Tổ Chức' : 'Trân Trọng Báo Tin') + '<br>' + title(c.name) + ' Của Con Chúng Tôi',
       full1: inv.fullFirst,
@@ -40,10 +41,6 @@
       'p-welcome': p.time,
       'cal-title': 'Tháng ' + +pd.m + ' / ' + pd.y,
       venue: p.venue + ', ' + p.address,
-      't1-time': p.time,
-      't1-label': 'Đón khách & tiệc chung vui (' + p.weekday + ' ' + dm(p.date) + ')',
-      't2-time': c.time,
-      't2-label': title(c.name) + ' (' + c.weekday + ' ' + dm(c.date) + ')',
     };
   }
 

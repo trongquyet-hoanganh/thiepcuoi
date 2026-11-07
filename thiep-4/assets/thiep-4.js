@@ -10,9 +10,10 @@
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
   function set(key, text) { $$('[data-w="' + key + '"]').forEach(function (el) { el.textContent = text; }); }
   function parts(d) { var x = d.split('-'); return { y: x[0], m: x[1], d: x[2] }; }
-  function dm(d) { var x = parts(d); return +x.d + '/' + +x.m; }
   function up(t) { return t.toUpperCase(); }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
+  // Địa chỉ hai ý: số nhà, đường | xã, thành phố
+  function twoLines(a) { return a.replace(', Xã ', ',\nXã '); }
 
   // ---------- Thông tin theo bên mời + giờ ----------
   function fillInfo() {
@@ -21,10 +22,10 @@
     set('short2', inv.second);
     set('p1-father', inv.parents[0].father);
     set('p1-mother', inv.parents[0].mother);
-    set('p1-address', inv.parents[0].address);
+    set('p1-address', twoLines(inv.parents[0].address));
     set('p2-father', inv.parents[1].father);
     set('p2-mother', inv.parents[1].mother);
-    set('p2-address', inv.parents[1].address);
+    set('p2-address', twoLines(inv.parents[1].address));
     set('announce', (inv.side === 'gai' ? 'TRÂN TRỌNG THÔNG BÁO TỔ CHỨC ' : 'TRÂN TRỌNG BÁO TIN ') + up(c.name) + ' CỦA CON CHÚNG TÔI');
     set('full1', inv.fullFirst);
     set('full2', inv.fullSecond);
@@ -43,10 +44,6 @@
     set('p-lunar', '(Tức ngày ' + p.lunar + ')');
     set('p-welcome', p.time);
     set('venue', p.venue + ', ' + p.address);
-    set('t1-time', p.time);
-    set('t1-label', 'Đón khách & tiệc chung vui (' + p.weekday + ' ' + dm(p.date) + ')');
-    set('t2-time', c.time);
-    set('t2-label', c.name + ' (' + c.weekday + ' ' + dm(c.date) + ')');
     $$('[data-w="maps-link"]').forEach(function (a) { a.href = p.maps; });
     $$('[data-w="maps-embed"]').forEach(function (f) {
       f.src = 'https://www.google.com/maps?q=' + encodeURIComponent(p.mapsQuery) + '&output=embed';
@@ -226,7 +223,6 @@
       var item = wishItem({ name: name, message: message, time: 'đang gửi...' });
       list.insertBefore(item, list.firstChild);
       send({ type: 'wish', name: name, message: message, invitee: inv.guest }).then(function () {
-        if (window.WishTicker) window.WishTicker.push({ name: name, message: message });
         item.querySelectorAll('span')[1].textContent = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ' ' + now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
         msgEl.value = '';
       }).catch(function () {
@@ -236,6 +232,7 @@
   }
 
   function init() {
+    if (window.renderTimeline) window.renderTimeline();
     fillInfo();
     buildCalendar();
     tick();

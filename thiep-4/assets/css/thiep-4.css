@@ -41,3 +41,6 @@
   color: rgb(18, 77, 0);
   overflow-wrap: anywhere;
 }
+
+/* Tên bố mẹ: không xuống dòng giữa tên, cỡ chữ co theo màn hình hẹp */
+[data-w$="-father"], [data-w$="-mother"] { font-size: min(15px, 4vw) !important; white-space: nowrap; }

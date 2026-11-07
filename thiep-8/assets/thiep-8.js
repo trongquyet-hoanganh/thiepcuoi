@@ -191,7 +191,6 @@
       var item = wishItem({ name: name, message: message, time: 'đang gửi...' });
       list.insertBefore(item, list.firstChild);
       send({ type: 'wish', name: name, message: message, invitee: inv.guest }).then(function () {
-        if (window.WishTicker) window.WishTicker.push({ name: name, message: message });
         item.querySelectorAll('span')[1].textContent = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ' ' + now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
         msgEl.value = '';
       }).catch(function () {
@@ -201,6 +200,7 @@
   }
 
   function init() {
+    if (window.renderTimeline) window.renderTimeline();
     fillInfo();
     buildCalendar();
     tick();

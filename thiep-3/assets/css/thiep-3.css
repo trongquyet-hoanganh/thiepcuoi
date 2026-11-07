@@ -88,3 +88,6 @@ main [data-w="guest"] { font-size: 38px !important; }
 @media (max-width: 767px) {
   [data-w="announce"] { font-size: min(13px, 3.4vw) !important; width: calc(100% + 32px); margin-inline: -16px; text-wrap: balance; }
 }
+
+/* Địa chỉ bố mẹ: giữ cỡ chữ gốc, chia dòng cân đối */
+[data-w$="-address"] { font-size: 13px !important; text-wrap: balance; }

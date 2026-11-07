@@ -5,7 +5,6 @@
 })(this, function (inv) {
   var p = inv.party, c = inv.ceremony;
   function parts(d) { var x = d.split('-'); return { y: x[0], m: x[1], d: x[2] }; }
-  function dm(d) { var x = parts(d); return +x.d + '/' + +x.m; }
   function up(t) { return t.toUpperCase(); }
   function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
   var pd = parts(p.date), cd = parts(c.date);
@@ -30,8 +29,6 @@
     'p-lunar': '(Tức ngày ' + p.lunar + ')', 'p-welcome': p.time,
     countdown: '', 'cal-title': 'Tháng ' + +pd.m + ' / ' + pd.y,
     venue: p.venue + ', ' + p.address,
-    't1-time': p.time, 't1-label': 'Tiệc cưới (' + p.weekday + ' ' + dm(p.date) + ')',
-    't2-time': c.time, 't2-label': c.name + ' (' + c.weekday + ' ' + dm(c.date) + ')',
   };
   return T;
 });

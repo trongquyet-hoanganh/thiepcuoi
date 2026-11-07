@@ -2,7 +2,7 @@
 // Tự hiện khi khách kéo gần hết thiệp (còn khoảng một màn hình nữa là tới cuối).
 // Bấm Có/Không là gửi luôn lên Google Sheet với tên khách trong link (?tenkhach=).
 // Link chung (không có tên) thì hiện ô điền tên và mở bàn phím ngay.
-// Xác nhận xong có ô gửi lời chúc (không bắt buộc).
+// Lời chúc gửi ở mục Sổ lưu bút cuối mỗi thiệp, không hỏi trong form này.
 // Dùng (sau config.js): <script src="../rsvp-prompt.js" data-accent="#C79A4E"
 //   data-bg="#10261C" data-ink="#E5E4D0"></script>
 // Nút nào có thuộc tính data-rsvp-open sẽ mở form này bất cứ lúc nào (kể cả khi khách đã đóng hoặc đã trả lời).
@@ -18,7 +18,7 @@
   var DONE_KEY = 'wedding-rsvp-sent' + guestKey, LATER_KEY = 'wedding-rsvp-later' + guestKey;
   var card = (location.pathname.match(/thiep-\d+/) || [''])[0];
   var ATTEND = { yes: 'Sẽ đến', no: 'Không đến được' };
-  var dialog, ui, choice = null, guestName = '', shown = false, timer = null, observer = null;
+  var dialog, ui, choice = null, shown = false, timer = null, closeTimer = null, observer = null;
 
   function stored(storage, key) { try { return storage.getItem(key); } catch (e) { return null; } }
   function store(storage, key, value) { try { storage.setItem(key, value); } catch (e) {} }
@@ -55,13 +55,11 @@
     '.rp-btn:focus-visible,.rp-x:focus-visible{outline:2px solid ' + accent + ';outline-offset:2px}' +
     '.rp-field{display:grid;gap:10px;margin-top:16px;text-align:left}' +
     '.rp-field label{font-size:16px;font-weight:700}' +
-    '.rp-field input,.rp-field textarea{width:100%;padding:12px 14px;border:1.5px solid ' + accent + '99;border-radius:12px;background:rgba(255,255,255,.08);color:inherit;font:16px/1.4 ' + font + '}' +
-    '.rp-field textarea{resize:vertical;min-height:84px}' +
-    '.rp-field input:focus,.rp-field textarea:focus{outline:2px solid ' + accent + ';outline-offset:1px}' +
+    '.rp-field input{width:100%;padding:12px 14px;border:1.5px solid ' + accent + '99;border-radius:12px;background:rgba(255,255,255,.08);color:inherit;font:16px/1.4 ' + font + '}' +
+    '.rp-field input:focus{outline:2px solid ' + accent + ';outline-offset:1px}' +
     '.rp-err{margin:0;color:#d9534f;font-size:15px;text-align:center}' +
     '.rp-done p{margin:6px 0 0;font-size:17px}' +
     '.rp-done .rp-title{font-size:23px}' +
-    '.rp-sent{margin:14px 0 0;font-size:16px;color:' + accent + '}' +
     '@media (prefers-reduced-motion: reduce){.rp[open]{animation:none}}';
 
   function el(tag, cls, text) {
@@ -107,17 +105,9 @@
     var err = el('p', 'rp-err'); err.setAttribute('role', 'alert');
     form.append(label, input, send1, err);
 
-    // Cảm ơn + ô gửi lời chúc
     var thanks = el('div', 'rp-done'); thanks.setAttribute('role', 'status');
     var thanksIcon = el('div', 'rp-icon'), thanksTitle = el('h2', 'rp-title'), thanksText = el('p');
-    var wish = el('form', 'rp-field'); wish.noValidate = true;
-    var wishLabel = el('label', '', 'Gửi đôi lời chúc tới cô dâu chú rể'); wishLabel.htmlFor = 'rp-wish';
-    var wishInput = el('textarea'); wishInput.id = 'rp-wish'; wishInput.name = 'message'; wishInput.maxLength = 500; wishInput.rows = 3;
-    wishInput.placeholder = 'Không bắt buộc';
-    var wishBtn = el('button', 'rp-btn rp-main', 'Gửi lời chúc'); wishBtn.type = 'submit';
-    wish.append(wishLabel, wishInput, wishBtn);
-    var sent = el('p', 'rp-sent', 'Lời chúc đã được gửi. Cảm ơn quý khách!');
-    thanks.append(thanksIcon, thanksTitle, thanksText, wish, sent);
+    thanks.append(thanksIcon, thanksTitle, thanksText);
 
     [yes, no].forEach(function (b) {
       b.addEventListener('click', function () {
@@ -140,9 +130,8 @@
       submit(name);
     });
 
-    // Cảm ơn ngay, không chờ API
+    // Cảm ơn ngay, không chờ API, rồi tự đóng
     function submit(name) {
-      guestName = name;
       send({ type: 'rsvp', name: name, attend: ATTEND[choice], guests: '', message: '' });
       done();
       ask.hidden = true; actions.hidden = true; form.hidden = true;
@@ -151,30 +140,21 @@
       thanksText.textContent = choice === 'yes' ? 'Hẹn gặp quý khách trong ngày vui của chúng tôi.' : 'Cảm ơn quý khách đã báo cho chúng tôi. Mong sớm gặp lại!';
       thanks.hidden = false;
       if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      closeTimer = setTimeout(function () { if (dialog.open) dialog.close(); }, 3200);
     }
-
-    wish.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var message = wishInput.value.trim();
-      if (!message) { wishInput.focus(); return; }
-      send({ type: 'wish', name: guestName, message: message, attend: '', guests: '' });
-      if (window.WishTicker) window.WishTicker.push({ name: guestName, message: message });
-      wish.hidden = true; sent.hidden = false;
-      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-      setTimeout(function () { if (dialog.open) dialog.close(); }, 2500);
-    });
 
     dialog.append(close, ask, actions, form, thanks);
     document.body.appendChild(dialog);
-    ui = { ask: ask, actions: actions, form: form, input: input, err: err, yes: yes, no: no, thanks: thanks, wish: wish, wishInput: wishInput, sent: sent };
+    ui = { ask: ask, actions: actions, form: form, input: input, err: err, yes: yes, no: no, thanks: thanks };
   }
 
   // Mỗi lần mở là bắt đầu lại từ câu hỏi
   function reset() {
     choice = null;
+    clearTimeout(closeTimer);
     ui.ask.hidden = false; ui.actions.hidden = false; ui.form.hidden = true; ui.err.hidden = true;
     ui.yes.removeAttribute('aria-pressed'); ui.no.removeAttribute('aria-pressed');
-    ui.thanks.hidden = true; ui.wish.hidden = false; ui.wishInput.value = ''; ui.sent.hidden = true;
+    ui.thanks.hidden = true;
   }
 
   function open() {
