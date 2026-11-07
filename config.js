@@ -67,15 +67,15 @@ window.WEDDING_SIDES = {
   },
 };
 
-// Lịch trình hai ngày (giống nhau cho cả hai bên). Giờ đón khách theo giờ tiệc của link, nhập tiệc sau 30 phút.
-function weddingTimeline(partyTime) {
+// Lịch trình hai ngày. Giờ đón khách theo giờ tiệc của link, nhập tiệc sau 30 phút; Dance & DJ nhà trai 18:00, nhà gái 19:00.
+function weddingTimeline(partyTime, side) {
   var t = partyTime.split(':'), m = +t[0] * 60 + +t[1] + 30;
   var seat = ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2);
   return [
     { date: 'Thứ Sáu 27.11', items: [
       { time: partyTime, label: 'Đón khách', icon: 'guests' },
       { time: seat, label: 'Nhập tiệc', icon: 'dinner' },
-      { time: '19:00', label: 'Dance & DJ', icon: 'music' },
+      { time: side === 'gai' ? '19:00' : '18:00', label: 'Dance & DJ', icon: 'music' },
     ] },
     { date: 'Thứ Bảy 28.11', items: [
       { time: '12:00', label: 'Lễ Vu Quy nhà gái', icon: 'home' },
@@ -109,7 +109,7 @@ window.weddingInvite = function () {
   if (m) info.party.time = ('0' + m[1]).slice(-2) + ':' + (m[2] || '00');
   info.side = side;
   info.guest = (params.get('tenkhach') || params.get('name') || '').trim();
-  info.timeline = weddingTimeline(info.party.time);
+  info.timeline = weddingTimeline(info.party.time, side);
   // Mốc đếm ngược: ngày + giờ tiệc theo giờ Việt Nam
   info.party.endtime = Date.parse(info.party.date + 'T' + info.party.time + ':00+07:00');
   return info;
