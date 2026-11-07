@@ -1,5 +1,5 @@
 // Form xác nhận tham dự dùng chung cho mọi thiệp (thay cho form riêng của từng mẫu).
-// Tự hiện khi khách kéo gần hết thiệp (còn khoảng một màn hình nữa là tới cuối).
+// Tự hiện khi khách đã xem thiệp đủ 15 giây hoặc kéo gần hết thiệp (còn khoảng một màn hình nữa là tới cuối), điều kiện nào đến trước.
 // Bấm Có/Không là gửi luôn lên Google Sheet với tên khách trong link (?tenkhach=).
 // Link chung (không có tên) thì hiện ô điền tên và mở bàn phím ngay.
 // Lời chúc gửi ở mục Sổ lưu bút cuối mỗi thiệp, không hỏi trong form này.
@@ -18,7 +18,7 @@
   var DONE_KEY = 'wedding-rsvp-sent' + guestKey, LATER_KEY = 'wedding-rsvp-later' + guestKey;
   var card = (location.pathname.match(/thiep-\d+/) || [''])[0];
   var ATTEND = { yes: 'Sẽ đến', no: 'Không đến được' };
-  var dialog, ui, choice = null, shown = false, timer = null, closeTimer = null, observer = null;
+  var dialog, ui, choice = null, shown = false, timer = null, ticker = null, closeTimer = null, observer = null;
 
   function stored(storage, key) { try { return storage.getItem(key); } catch (e) { return null; } }
   function store(storage, key, value) { try { storage.setItem(key, value); } catch (e) {} }
@@ -179,7 +179,7 @@
   }
 
   function stop() {
-    clearTimeout(timer);
+    clearTimeout(timer); clearInterval(ticker);
     if (observer) { observer.disconnect(); observer = null; }
   }
 
@@ -193,7 +193,7 @@
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('div[data-rsvp-open]')) { e.preventDefault(); open(); }
   });
 
-  // ---------- Tự hỏi khi kéo gần hết thiệp ----------
+  // ---------- Tự hỏi sau 15 giây xem thiệp hoặc khi kéo gần hết thiệp ----------
   if (!API || stored(localStorage, DONE_KEY) || stored(sessionStorage, LATER_KEY)) return;
 
   // Không chen vào lúc khách đang mở hộp thoại khác hoặc còn ở màn mở thiệp
@@ -219,4 +219,10 @@
     }, { rootMargin: '0px 0px 80% 0px' });
     observer.observe(end);
   }
+
+  // Chỉ đếm giây khách thật sự đang xem thiệp (đã qua màn mở thiệp, không mở hộp thoại khác, tab đang hiện)
+  var seen = 0;
+  ticker = setInterval(function () {
+    if (!busy() && !document.hidden && ++seen >= 15) { clearInterval(ticker); autoShow(); }
+  }, 1000);
 })();
