@@ -62,7 +62,7 @@ window.WEDDING_SIDES = {
       mapsQuery: 'Hồ Quý Thôn Đoài Ô Diên Hà Nội',
     },
     ceremony: {
-      name: 'Lễ vu quy', time: '12:00', weekday: 'Thứ Bảy', date: '2026-11-28', lunar: '20 tháng 10 năm Bính Ngọ', place: '', // không ghi nơi cử hành
+      name: 'Lễ vu quy', time: '12:45', weekday: 'Thứ Bảy', date: '2026-11-28', lunar: '20 tháng 10 năm Bính Ngọ', place: '', // không ghi nơi cử hành
       address: 'Số 03, Xóm Đoàn Kết, Cụm 2, Xã Ô Diên, TP Hà Nội',
       maps: 'https://www.google.com/maps/search/X%C3%B3m+%C4%90o%C3%A0n+K%E1%BA%BFt+C%E1%BB%A5m+2+%C3%94+Di%C3%AAn+H%C3%A0+N%E1%BB%99i',
     },
