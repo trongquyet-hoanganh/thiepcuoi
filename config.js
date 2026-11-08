@@ -2,6 +2,8 @@
 window.WEDDING_CONFIG = {
   // URL web app của Google Apps Script (file google-apps-script/Code.gs), kết thúc bằng /exec.
   // Để trống thì form xác nhận và sổ lời chúc chưa gửi/nhận được dữ liệu.
+  // Ngày cưới cho các chỗ ghi ngày không gắn với sự kiện nào (ảnh mở đầu, màn mở thiệp). Tiệc 27.11 vẫn theo party.date.
+  weddingDate: '2026-11-28',
   apiUrl: 'https://script.google.com/macros/s/AKfycbxoDlqoRym75jWCf_jD5zZhfLhcMJB47_gm4PoVwZMg-7Sn_YQ6ZC3BhNu7r7zYdJhYEw/exec',
 };
 
@@ -78,7 +80,7 @@ function weddingTimeline(partyTime, side) {
       { time: side === 'gai' ? '19:00' : '18:00', label: 'Dance & DJ', icon: 'music' },
     ] },
     { date: 'Thứ Bảy 28.11', items: [
-      { time: '12:00', label: 'Lễ Vu Quy nhà gái', icon: 'home' },
+      { time: '12:45', label: 'Lễ Vu Quy nhà gái', icon: 'home' },
       { time: '14:45', label: 'Lễ Thành Hôn nhà trai', icon: 'rings' },
     ] },
   ];
@@ -108,6 +110,7 @@ window.weddingInvite = function () {
   var m = gio.match(/^([01]?\d|2[0-3])[:hH.]?([0-5]\d)?$/);
   if (m) info.party.time = ('0' + m[1]).slice(-2) + ':' + (m[2] || '00');
   info.side = side;
+  info.weddingDate = window.WEDDING_CONFIG.weddingDate;
   info.guest = (params.get('tenkhach') || params.get('name') || '').trim();
   info.timeline = weddingTimeline(info.party.time, side);
   // Mốc đếm ngược: ngày + giờ tiệc theo giờ Việt Nam

@@ -8,13 +8,13 @@
   function twoLines(a) { return a.replace(', Xã ', ',\nXã '); }
 
   function texts(inv, guest) {
-    var p = inv.party, c = inv.ceremony, pd = parts(p.date), cd = parts(c.date);
+    var p = inv.party, c = inv.ceremony, pd = parts(p.date), cd = parts(c.date), wd = parts(inv.weddingDate);
     var g = guest || 'Quý khách';
     return {
       short1: inv.first,
       short2: inv.second,
-      'intro-date': +pd.d + ' tháng ' + +pd.m + ', ' + pd.y,
-      'hero-date': pd.d + ' · ' + pd.m + ' · ' + pd.y,
+      'intro-date': +wd.d + ' tháng ' + +wd.m + ', ' + wd.y,
+      'hero-date': wd.d + ' · ' + wd.m + ' · ' + wd.y,
       guest: g,
       letter: 'Thân gửi ' + g + ', chúng tôi vô cùng hạnh phúc được chia sẻ niềm vui trong ngày trọng đại này. ' +
         'Sự hiện diện của ' + (guest || 'quý khách') + ' sẽ là niềm vinh hạnh lớn lao đối với gia đình chúng tôi. Trân trọng kính mời!',

@@ -41,9 +41,23 @@
   overflow-wrap: anywhere;
 }
 /* Họ tên đầy đủ dài hơn tên mẫu: thu cỡ chữ cho vừa khung */
-h3[data-w="full1"], h3[data-w="full2"] { font-size: clamp(38px, 11.5vw, 56px) !important; white-space: nowrap; }
+h3[data-w="full1"], h3[data-w="full2"] { font-size: clamp(30px, 10.5vw, 56px) !important; white-space: nowrap; }
 
 /* Lịch trình: chữ lời mô tả không chạm viền khung (bản gốc sát mép phải) */
 span:has(> [data-w="t1-label"]), span:has(> [data-w="t2-label"]) { padding-right: 18px; }
 
 /* Hộp quà: tiêu đề chữ trắng trên nền vàng nhạt khó đọc (bản gốc), đổi sang đỏ */
+
+/* Tên chú rể / cô dâu đầu thiệp: mỗi tên một dòng, co chữ theo màn hình nhỏ để không đè khung ảnh */
+[data-w="short1"], [data-w="short2"] { font-size: min(24px, 5.1vw) !important; white-space: nowrap; }
+div:has(> img[src*="double-happiness.webp"]) { gap: 8px !important; }
+
+/* Màn hình hẹp (iPhone SE, máy Android nhỏ): chữ không chạm viền khung */
+@media (max-width: 400px) {
+  .t8-ptitle { display: inline-block; max-width: 250px; text-wrap: balance; }
+  h2.text-\[20px\] { font-size: min(20px, 5.2vw) !important; }
+  [data-w$="-father"], [data-w$="-mother"] { font-size: min(15px, 3.9vw) !important; white-space: nowrap; }
+  ol:has(> li.contents) { column-gap: 14px !important; }
+}
+/* Mốc cuối của lịch trình không chạm hoa văn góc khung */
+ol:has(> li.contents) { padding-bottom: 22px; }
